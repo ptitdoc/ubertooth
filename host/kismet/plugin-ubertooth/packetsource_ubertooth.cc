@@ -40,6 +40,7 @@
 
 #include "packetsource_ubertooth.h"
 #include "packet_btbb.h"
+#include "bluetooth_packet.h"
 
 PacketSource_Ubertooth::PacketSource_Ubertooth(GlobalRegistry *in_globalreg, string in_interface,
 									   vector<opt_pair> *in_opts) : 
@@ -506,13 +507,15 @@ int PacketSource_Ubertooth::Poll() {
 		}
 
 		// Delete the temp struct
+		printf("Unreferencing btbb packet (references: %d)",((struct btbb_packet*)pkt)->refcount);
 		btbb_packet_unref(pkt);
 		pkt = NULL;
 	}
 
 	// Flush the queue
 	packet_queue.clear();
-	//printf("debug - packet queue cleared %d\n", packet_queue.size());
+
+	printf("debug - packet queue should be cleared %d\n", packet_queue.size());
 
 	pthread_mutex_unlock(&packet_lock);
 
